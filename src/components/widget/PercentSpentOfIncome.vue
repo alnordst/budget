@@ -1,13 +1,13 @@
 <template lang="pug">
-  span {{result}}
+  span {{result * 100}}%
 </template>
 
 <script>
-import { mapGetters }
+import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters('pages', [
+    ...mapGetters([
       'data'
     ]),
     result () {
@@ -15,11 +15,11 @@ export default {
         .filter(it => it.active && it.amount > 0)
         .reduce((acc, item) => {
           return (acc + item.thisMonthAmt)
-        })
+        }, 0)
       let spending = this.data
         .filter(it => it.active && it.amount < 0)
         .reduce((acc, item) => {
-          return (acc - item.avgMonthAmt))
+          return (acc - item.avgMonthAmt)
         }, 0)
       return spending / income
     }

@@ -1,81 +1,12 @@
-import dayjs from 'dayjs'
-
-const calcOccurrences = (regularity, date) => {
-  return calcOccurrencesFuncs[regularity](dayjs(date))
-}
-
-calcOccurrencesFuncs = {
-  'annually': it => {
-    if(dayjs().month() === it.month())
-      return [dayjs().date(it.date())]
-    else
-      return []
-  },
-  'semi-annually': it => {
-    if(dayjs().month() % 6 === it.month() % 6)
-      return [dayjs().date(it.date())]
-    else
-      return []
-  },
-  'quarterly': it => {
-    if(dayjs().month() % 3 === it.month() % 3)
-      return [dayjs().date(it.date())]
-    else
-      return []
-  },
-  'monthly': it => {
-    return [dayjs().date(it.date())]
-  },
-  'semi-monthly': it => {
-    let dates = [dayjs().date(it.date())]
-    if(it.date() <= 14)
-      dates.push(dayjs().date(it.date()+14))
-    else
-      dates.unshift(dayjs().date(it.date()-14))
-    return dates
-  },
-  'bi-weekly': it => {
-    let offset = dayjs().startOf(month).diff(it, 'days') % 14
-    let dates = [dayjs().date(offset + 1)]
-    while(dates[dates.length - 1].add(2, 'week').month() === dayjs().month()) {
-      dates.push(dates[date.length - 1].add(2, 'week'))
-    }
-    return dates
-  },
-  'weekly': it => {
-    let offset = dayjs().startOf(month).diff(it, 'days') % 7
-    let dates = [dayjs().date(offset + 1)]
-    while(dates[dates.length - 1].add(1, 'week').month() === dayjs().month()) {
-      dates.push(dates[date.length - 1].add(1, 'week'))
-    }
-    return dates
-  },
-  'daily': it => {
-    let dates = []
-    for(let i = 1; i <= dayjs().endOf(month).date(); i++) {
-      dates.push(dayjs().date(i))
-    }
-    return dates
-  }
-}
-
-annualOccurrenceCounts = {
-  'annually': 1,
-  'semi-annually': 2,
-  'quarterly': 4,
-  'monthly': 12,
-  'semi-monthly': 24,
-  'bi-weekly': 365.25 / 14,
-  'weekly': 365.25 / 7,
-  'daily': 365.25
-}
+import keygen from 'keygenerator'
+import util from './pagesUtil'
 
 const state = () => ({
-  pageIndex: undefined,
+  pageId: undefined,
   pages: [
     {
       name: "Fun Money",
-      slug: 'fun-money',
+      id: 'abc',
       sources: [
         {
           name: "Allowance",
@@ -100,38 +31,90 @@ const state = () => ({
         }
       ],
       widgets: [
+        'transaction-list',
         'monthly-income',
         'monthly-avg-spend',
         'unallocated-money',
         'percent-spent-of-income',
         'percent-unallocated',
         'bills-this-month',
-        'expected-bills-account-balance'
+        'expected-bills-account-balance',
+        'minimum-bills-account-balance'
       ]
+    },
+    {
+      name: "Main Budget",
+      id: 'def',
+      sources: [],
+      widgets: []
     }
   ]
 })
 
 const getters = {
-  page: (state) => state.pages[state.pageIndex],
+  getPage: (state) => id => state.pages.find(it => it.id == id),
+  page: (state, getters) => getters.getPage(state.pageId),
+  pageIsSet: (state, getters) => !!getters.page,
   data: (state, getters) => {
-    return getters.page.sources.filter(it => it.active).map(source => {
-      let occurrences = calcOccurrences(source.regularity, source.date)
-      return {
-        ...source,
-        occurrences,
-        thisMonthAmt: occurrences.length * source.amount,
-        avgMonthAmt: annualOccurrenceCounts[source.regularity] * source.amount
-      }
-    })
+    let page = getters.page
+    if(page)
+      return page.sources.filter(it => it.active).map(source => {
+        let occurrences = util.calcOccurrences(source.regularity, source.date)
+        return {
+          ...source,
+          occurrences,
+          thisMonthAmt: occurrences.length * source.amount,
+          avgMonthAmt: util.annualOccurrenceCounts[source.regularity] * source.amount / 12,
+          monthsToNext: util.calcMonthsToNext(source.regularity, source.date)
+        }
+      })
+    else
+      return []
   }
 }
 
 const mutations = {
+  setPage(state, id) {
+    state.pageId = id
+  },
+  createPage(state, title) {
+    let id
+    while(!id || state.pages.some(page => page.id === id))
+      id = keygen._({length: 6})
+    state.pages.push({
+      name: title ? title : 'Untitled Page',
+      id,
+      sources: [],
+      widgets: []
+    })
+    state.pages.sort((a, b) => {
+      let A = a.name.toUpperCase()
+      let B = b.name.toUpperCase()
+      return A > B
+    })
+  },
+  renamePage(state, {id, title}) {
+    console.log('renaming')
+    let page = state.pages.find(it => it.id == id)
+    console.log('page', page)
+    if(page){
+      page.name = title ? title : 'Untitled Page'
+      state.pages.sort((a, b) => {
+        let A = a.name.toUpperCase()
+        let B = b.name.toUpperCase()
+        return A > B
+      })
+    }
+  },
+  removePage(state, id) {
+    let index = state.pages.findIndex(it => it.id == id)
+    if(index >= 0)
+      state.pages.splice(index, 1)
+  }
 }
 
 export default {
-  namespaced: true,
+  namespaced: false,
   state,
   getters,
   mutations

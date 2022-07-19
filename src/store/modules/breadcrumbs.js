@@ -5,7 +5,7 @@ const baseBreadcrumbs = [
   },
   {
     text: 'Budget',
-    href: "/"
+    to: '/'
   }
 ]
 
@@ -24,6 +24,9 @@ const getters = {
       else
         return it
     })
+  },
+  truncatedBreadcrumbs: (state, getters) => {
+    return getters.breadcrumbs.slice(-2)
   }
 }
 
@@ -37,7 +40,7 @@ const mutations = {
 }
 
 export default {
-  namespaced: true,
+  namespaced: false,
   state,
   getters,
   mutations

@@ -2,33 +2,36 @@
 v-container
   .display-4.text-center(v-if="!page") 404
   div(v-else)
-    span {{page}}
+    v-row.pa-2
+      widget(v-for="widget in page.widgets" :type="widget")
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
+import Widget from '../components/widget/WidgetIndex.vue'
 
 export default {
+  components: {
+    Widget
+  },
   computed: {
-    ...mapState('pages', [
-      'pages'
-    ]),
-    pageSlug () {
-      return this.$route.params.pageSlug
-    },
-    page () {
-      return this.pages.find(it => it.slug === this.pageSlug)
-    }
+    ...mapGetters([
+      'page',
+      'data'
+    ])
   },
   methods: {
-    ...mapMutations('breadcrumbs', [
-      'setAdditionalBreadcrumbs'
+    ...mapMutations([
+      'setAdditionalBreadcrumbs',
+      'setPage'
     ]),
     init() {
+      let id = this.$route.params.pageId
+      this.setPage(id)
       this.setAdditionalBreadcrumbs([
         {
           text: this.page ? this.page.name : 'Not Found',
-          href: `/page/${this.pageSlug}`
+          href: `/page/${id}`
         }
       ])
     }

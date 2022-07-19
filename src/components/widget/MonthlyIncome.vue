@@ -1,13 +1,13 @@
 <template lang="pug">
-  span {{result}}
+  span ${{result}}
 </template>
 
 <script>
-import { mapGetters }
+import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters('pages', [
+    ...mapGetters([
       'data'
     ]),
     result () {
@@ -15,7 +15,8 @@ export default {
         .filter(it => it.active && it.amount > 0)
         .reduce((acc, item) => {
           return (acc + item.thisMonthAmt)
-        })
+        }, 0)
     }
   }
 }
+</script>

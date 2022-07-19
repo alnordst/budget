@@ -1,13 +1,13 @@
 <template lang="pug">
-  span {{costThisMonth}}
+  span ${{costThisMonth}}
 </template>
 
 <script>
-import { mapGetters }
+import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters('pages', [
+    ...mapGetters([
       'data'
     ]),
     costThisMonth () {
