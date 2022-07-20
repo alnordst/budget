@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import keygen from 'keygenerator'
 import util from './pagesUtil'
 
@@ -10,6 +11,7 @@ const state = () => ({
       sources: [
         {
           name: "Allowance",
+          id: 'ab',
           active: true,
           regularity: 'monthly',
           date: '07/01/2022',
@@ -17,6 +19,7 @@ const state = () => ({
         },
         {
           name: 'Game Pass',
+          id: 'bc',
           active: true,
           regularity: 'monthly',
           date: '07/04/2022',
@@ -24,10 +27,19 @@ const state = () => ({
         },
         {
           name: 'Google Domains',
+          id: 'cd',
           active: true,
           regularity: 'annually',
           date: '06/24/2022',
           amount: -12
+        },
+        {
+          name: 'Inactive',
+          id: 'de',
+          active: false,
+          regularity: 'semi-annually',
+          date: '07/21/2022',
+          amount: -30
         }
       ],
       widgets: [
@@ -96,7 +108,6 @@ const mutations = {
   renamePage(state, {id, title}) {
     console.log('renaming')
     let page = state.pages.find(it => it.id == id)
-    console.log('page', page)
     if(page){
       page.name = title ? title : 'Untitled Page'
       state.pages.sort((a, b) => {
@@ -110,6 +121,41 @@ const mutations = {
     let index = state.pages.findIndex(it => it.id == id)
     if(index >= 0)
       state.pages.splice(index, 1)
+  },
+  createSource(state, {pageId, data}) {
+    let page = state.pages.find(it => it.id == pageId)
+    if(page) {
+      let id
+      while(!id || page.sources.some(source => source.id === id))
+        id = keygen._({length: 6})
+      page.sources.push({
+        id,
+        name: data.name || 'Untitled Source',
+        amount: data.amount || 0,
+        regularity: data.regularity || 'monthly',
+        date: data.date || dayjs().format('YYYY-MM-DD')
+      })
+    }
+  },
+  editSource(state, {pageId, sourceId, data}) {
+    let page = state.pages.find(it => it.id == pageId)
+    if(page) {
+      let source = page.sources.find(it => it.id == sourceId)
+      if(source) {
+        ['name', 'amount', 'regularity', 'date'].forEach(field => {
+          if(field in data)
+            source[field] = data[field]
+        })
+      }
+    }
+  },
+  removeSource(state, {pageId, sourceId}) {
+    let page = state.pages.find(it => it.id == pageId)
+    if(page) {
+      let index = page.sources.findIndex(it => it.id == sourceId)
+      if(index >= 0)
+        page.sources.splice(index, 1)
+    }
   }
 }
 

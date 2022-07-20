@@ -31,7 +31,7 @@ export default {
       this.setAdditionalBreadcrumbs([
         {
           text: this.page ? this.page.name : 'Not Found',
-          href: `/page/${id}`
+          to: `/page/${id}`
         }
       ])
     }

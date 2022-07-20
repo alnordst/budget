@@ -27,11 +27,19 @@ export default {
     ...mapMutations([
       'resetBreadcrumbs',
       'setPage'
-    ])
+    ]),
+    init() {
+      this.resetBreadcrumbs()
+      this.setPage(undefined)
+    }
   },
   mounted() {
-    this.resetBreadcrumbs
-    this.setPage(undefined)
+    this.init()
+  },
+  watch: {
+    $route() {
+      this.init()
+    }
   }
 }
 </script>
