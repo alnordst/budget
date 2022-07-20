@@ -16,19 +16,23 @@ const routes = [
   },
   {
     path: '/page/:pageId',
+    name: 'view-page',
     component: ViewPage
   },
   {
     path: '/manage-pages',
+    name: 'manage-pages',
     component: ManagePages
   },
   {
     path: '/page/:pageId/manage-sources',
+    name: 'manage-sources',
     component: ManageSources
   },
   {
     path: '/page/:pageId/manage-widgets',
-    components: ManageWidgets
+    name: 'manage-widgets',
+    component: ManageWidgets
   }
 ]
 

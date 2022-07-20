@@ -133,7 +133,8 @@ const mutations = {
         name: data.name || 'Untitled Source',
         amount: data.amount || 0,
         regularity: data.regularity || 'monthly',
-        date: data.date || dayjs().format('YYYY-MM-DD')
+        date: data.date || dayjs().format('YYYY-MM-DD'),
+        active: data.active || false
       })
     }
   },
@@ -155,6 +156,34 @@ const mutations = {
       let index = page.sources.findIndex(it => it.id == sourceId)
       if(index >= 0)
         page.sources.splice(index, 1)
+    }
+  },
+  addWidget(state, {pageId, type}) {
+    let page = state.pages.find(it => it.id == pageId)
+    if(page) {
+      page.widgets.push(type)
+    }
+  },
+  moveWidgetUp(state, {pageId, index}) {
+    let page = state.pages.find(it => it.id == pageId)
+    if(page && index > 0) {
+      let temp = page.widgets[index]
+      page.widgets.splice(index, 1)
+      page.widgets.splice(index-1, 0, temp)
+    }
+  },
+  moveWidgetDown(state, {pageId, index}) {
+    let page = state.pages.find(it => it.id == pageId)
+    if(page && index < page.widgets.length - 1) {
+      let temp = page.widgets[index]
+      page.widgets.splice(index, 1)
+      page.widgets.splice(index+1, 0, temp)
+    }
+  },
+  removeWidget(state, {pageId, index}) {
+    let page = state.pages.find(it => it.id == pageId)
+    if(page) {
+      page.widgets.splice(index, 1)
     }
   }
 }
