@@ -4,8 +4,11 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
+import Clipboard from 'v-clipboard'
 
 Vue.config.productionTip = false
+
+Vue.use(Clipboard)
 
 new Vue({
   router,

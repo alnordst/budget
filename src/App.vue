@@ -16,10 +16,10 @@ v-app
             v-list-item-title Manage Widgets
           v-list-item(to="/manage-pages")
             v-list-item-title Manage Pages
+          v-list-item(@click="$clipboard(pagesToJson)")
+            v-list-item-title Backup to Clipboard
           v-list-item(disabled)
-            v-list-item-title Backup to File
-          v-list-item(disabled)
-            v-list-item-title Restore from File
+            v-list-item-title Restore from Clipboard
           v-list-item(disabled)
             v-list-item-title Backup to Dropbox
           v-list-item(disabled)
@@ -42,7 +42,8 @@ export default {
       pageId: state => state.pages.pageId
     }),
     ...mapGetters([
-      'pageIsSet'
+      'pageIsSet',
+      'pagesToJson'
     ]),
     breadcrumbs () {
       return this.$vuetify.breakpoint.xsOnly ? this.$store.getters.truncatedBreadcrumbs : this.$store.getters.breadcrumbs
@@ -50,7 +51,8 @@ export default {
   },
   methods: {
     ...mapMutations([
-      'resetBreadcrumbs'
+      'resetBreadcrumbs',
+      'pagesFromJson'
     ])
   }
 };

@@ -3,7 +3,7 @@ v-container
   .display-4.text-center(v-if="!page") 404
   div(v-else)
     v-row.pa-2
-      widget(v-for="widget in page.widgets" :type="widget")
+      widget(v-for="widget in page.widgets" :key="widget" :type="widget")
 </template>
 
 <script>

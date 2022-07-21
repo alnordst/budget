@@ -64,6 +64,7 @@ const state = () => ({
 })
 
 const getters = {
+  pagesToJson: (state) => JSON.stringify(state.pages),
   getPage: (state) => id => state.pages.find(it => it.id == id),
   page: (state, getters) => getters.getPage(state.pageId),
   pageIsSet: (state, getters) => !!getters.page,
