@@ -17,15 +17,15 @@ v-col(cols="12" :sm="cols").pa-2
 <script>
 import { capitalCase } from 'change-case'
 
-import BillsThisMonth from './BillsThisMonth.vue'
-import ExpectedBillsAccountBalance from './ExpectedBillsAccountBalance.vue'
-import MinimumBillsAccountBalance from './MinimumBillsAccountBalance.vue'
-import MonthlyAvgSpend from './MonthlyAvgSpend.vue'
-import MonthlyIncome from './MonthlyIncome.vue'
-import PercentSpentOfIncome from './PercentSpentOfIncome.vue'
-import PercentUnallocated from './PercentUnallocated.vue'
-import TransactionList from './TransactionList.vue'
-import UnallocatedMoney from './UnallocatedMoney.vue'
+import BillsThisMonth from './types/BillsThisMonth.vue'
+import ExpectedBillsAccountBalance from './types/ExpectedBillsAccountBalance.vue'
+import MinimumBillsAccountBalance from './types/MinimumBillsAccountBalance.vue'
+import MonthlyAvgSpend from './types/MonthlyAvgSpend.vue'
+import MonthlyIncome from './types/MonthlyIncome.vue'
+import PercentSpentOfIncome from './types/PercentSpentOfIncome.vue'
+import PercentUnallocated from './types/PercentUnallocated.vue'
+import TransactionList from './types/TransactionList.vue'
+import UnallocatedMoney from './types/UnallocatedMoney.vue'
 
 export default {
   components: {

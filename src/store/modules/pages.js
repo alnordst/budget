@@ -2,12 +2,19 @@ import dayjs from 'dayjs'
 import keygen from 'keygenerator'
 import util from './pagesUtil'
 
+const widgetFiles = require.context(
+  '@/components/widget/types',
+  true,
+  /^.*\.vue$/
+)
+
 const state = () => ({
   pageId: undefined,
   pages: []
 })
 
 const getters = {
+  widgetTypes: () => widgetFiles.keys().map(it => it.slice(2, -4)),
   pagesToJson: (state) => JSON.stringify(state.pages),
   getPage: (state) => id => state.pages.find(it => it.id == id),
   page: (state, getters) => getters.getPage(state.pageId),

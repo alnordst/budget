@@ -194,9 +194,9 @@ export default {
       this.input = {
         name: undefined,
         amount: undefined,
-        type: undefined,
-        regularity: undefined,
-        date: undefined,
+        type: 0,
+        regularity: 'monthly',
+        date: dayjs().format('YYYY-MM-DD'),
         active: true
       }
     },

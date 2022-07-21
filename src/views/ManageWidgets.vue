@@ -8,7 +8,7 @@ v-container
       outlined
     )
       v-card-text.d-flex
-        .overline {{item}}
+        .overline {{capitalize(item)}}
         v-spacer
         v-btn(
           icon
@@ -43,6 +43,7 @@ v-container
 </template>
 
 <script>
+import { capitalCase, snakeCase } from 'change-case'
 import { mapGetters, mapMutations } from 'vuex'
 import WidthSetter from '../components/WidthSetter.vue'
 
@@ -51,23 +52,20 @@ export default {
     WidthSetter
   },
   data: () => ({
-    widgetSelection: 'bills-this-month',
-    widgetOptions: [
-      'bills-this-month',
-      'expected-bills-account-balance',
-      'minimum-bills-account-balance',
-      'monthly-avg-spend',
-      'monthly-income',
-      'percent-spent-of-income',
-      'percent-unallocated',
-      'transaction-list',
-      'unallocated-money'
-    ]
+    widgetSelection: undefined
   }),
   computed: {
     ...mapGetters([
-      'page'
-    ])
+      'page',
+      'widgetTypes'
+    ]),
+    widgetOptions () {
+      return this.widgetTypes.map(it => ({
+        text: capitalCase(it),
+        value: snakeCase(it),
+        disabled: this.page.widgets.includes(snakeCase(it))
+      }))
+    }
   },
   methods: {
     ...mapMutations([
@@ -91,6 +89,10 @@ export default {
           text: 'Widgets'
         }
       ])
+      this.widgetSelection = snakeCase(this.widgetTypes[0])
+    },
+    capitalize(it) {
+      return capitalCase(it)
     }
   },
   mounted() {

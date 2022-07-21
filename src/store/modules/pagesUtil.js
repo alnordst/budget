@@ -1,7 +1,12 @@
 import dayjs from 'dayjs'
 
-const calcOccurrences = (regularity, date) => {
-  return calcOccurrencesFuncs[regularity](dayjs(date))
+const pullDate = (a, b) => {
+  let date = a.endOf('month').date() < b.date() ? a.endOf('month').date() : b.date()
+  return a.date(date)
+}
+
+const calcOccurrences = (regularity, then, now=dayjs()) => {
+  return calcOccurrencesFuncs[regularity](dayjs(date), dayjs(now))
 }
 
 const calcMonthsToNext = (regularity, date) => {
@@ -9,64 +14,64 @@ const calcMonthsToNext = (regularity, date) => {
 }
 
 const calcOccurrencesFuncs = {
-  'annually': it => {
-    if(dayjs().month() === it.month())
-      return [dayjs().date(it.date())]
+  'annually': (then, now) => {
+    if(now.month() === then.month())
+      return [pullDate(now, then)]
     else
       return []
   },
-  'semi-annually': it => {
-    if(dayjs().month() % 6 === it.month() % 6)
-      return [dayjs().date(it.date())]
+  'semi-annually': (then, now) => {
+    if(now.month() % 6 === then.month() % 6)
+      return [pullDate(now, then)]
     else
       return []
   },
-  'quarterly': it => {
-    if(dayjs().month() % 3 === it.month() % 3)
-      return [dayjs().date(it.date())]
+  'quarterly': (then, now) => {
+    if(now.month() % 3 === then.month() % 3)
+      return [pullDate(now, then)]
     else
       return []
   },
-  'monthly': it => {
-    return [dayjs().date(it.date())]
+  'monthly': (then, now) => {
+    return [pullDate(now, then)]
   },
-  'semi-monthly': it => {
-    let dates = [dayjs().date(it.date())]
-    if(it.date() <= 14)
-      dates.push(dayjs().date(it.date()+14))
+  'semi-monthly': (then, now) => {
+    let dates = [pullDate(now, then)]
+    if(then.date() <= 14)
+      dates.push(pullDate(now, then.add(14, 'day')))
     else
-      dates.unshift(dayjs().date(it.date()-14))
+      dates.unshift(pullDate(now, then.subtract(14, 'day')))
     return dates
   },
-  'bi-weekly': it => {
-    let offset = dayjs().startOf('month').diff(it, 'days') % 14
-    let dates = [dayjs().date(offset + 1)]
-    while(dates[dates.length - 1].add(2, 'week').month() === dayjs().month()) {
+  'bi-weekly': (then, now) => {
+    let offset = now.startOf('month').diff(then, 'days') % 14
+    let dates = [now.date(offset + 1)]
+    while(dates[dates.length - 1].add(2, 'week').month() === now.month()) {
       dates.push(dates[dates.length - 1].add(2, 'week'))
     }
     return dates
   },
-  'weekly': it => {
-    let offset = dayjs().startOf('month').diff(it, 'days') % 7
-    let dates = [dayjs().date(offset + 1)]
-    while(dates[dates.length - 1].add(1, 'week').month() === dayjs().month()) {
+  'weekly': (then, now) => {
+    let offset = now.startOf('month').diff(then, 'days') % 7
+    let dates = [now.date(offset + 1)]
+    while(dates[dates.length - 1].add(1, 'week').month() === now.month()) {
       dates.push(dates[dates.length - 1].add(1, 'week'))
     }
     return dates
   },
-  'daily': () => {
+  'daily': (now) => {
     let dates = []
-    for(let i = 1; i <= dayjs().endOf('month').date(); i++) {
-      dates.push(dayjs().date(i))
+    for(let i = 1; i <= now.endOf('month').date(); i++) {
+      dates.push(now.date(i))
     }
     return dates
   }
 }
 
 const calcMonthsToNextFuncs = {
-  'annually': it => (12 + it.month() - dayjs().month()) % 12,
-  'semi-annually': it => (12 + it.month() - dayjs().month()) % 6,
-  'quarterly': it => (12 + it.month() - dayjs().month()) % 3,
+  'annually': it => (12 + it.month() - now.month()) % 12,
+  'semi-annually': it => (12 + it.month() - now.month()) % 6,
+  'quarterly': it => (12 + it.month() - now.month()) % 3,
   'monthly': () => 0,
   'semi-monthly': () => 0,
   'bi-weekly': () => 0,
