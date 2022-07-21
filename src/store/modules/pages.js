@@ -4,63 +4,7 @@ import util from './pagesUtil'
 
 const state = () => ({
   pageId: undefined,
-  pages: [
-    {
-      name: "Fun Money",
-      id: 'abc',
-      sources: [
-        {
-          name: "Allowance",
-          id: 'ab',
-          active: true,
-          regularity: 'monthly',
-          date: '07/01/2022',
-          amount: 100
-        },
-        {
-          name: 'Game Pass',
-          id: 'bc',
-          active: true,
-          regularity: 'monthly',
-          date: '07/04/2022',
-          amount: -15
-        },
-        {
-          name: 'Google Domains',
-          id: 'cd',
-          active: true,
-          regularity: 'annually',
-          date: '06/24/2022',
-          amount: -12
-        },
-        {
-          name: 'Inactive',
-          id: 'de',
-          active: false,
-          regularity: 'semi-annually',
-          date: '07/21/2022',
-          amount: -30
-        }
-      ],
-      widgets: [
-        'transaction-list',
-        'monthly-income',
-        'monthly-avg-spend',
-        'unallocated-money',
-        'percent-spent-of-income',
-        'percent-unallocated',
-        'bills-this-month',
-        'expected-bills-account-balance',
-        'minimum-bills-account-balance'
-      ]
-    },
-    {
-      name: "Main Budget",
-      id: 'def',
-      sources: [],
-      widgets: []
-    }
-  ]
+  pages: []
 })
 
 const getters = {
@@ -87,6 +31,16 @@ const getters = {
 }
 
 const mutations = {
+  pagesFromJson: (state, {data, replace}) => {
+    let rawData = JSON.parse(data)
+    if(Array.isArray(rawData)) {
+      //todo clean data
+      if(replace)
+        state.pages = rawData
+      else
+        state.pages.push(...rawData)
+    }
+  },
   setPage(state, id) {
     state.pageId = id
   },
@@ -120,8 +74,9 @@ const mutations = {
   },
   removePage(state, id) {
     let index = state.pages.findIndex(it => it.id == id)
-    if(index >= 0)
+    if(index >= 0) {
       state.pages.splice(index, 1)
+    }
   },
   createSource(state, {pageId, data}) {
     let page = state.pages.find(it => it.id == pageId)
@@ -155,8 +110,9 @@ const mutations = {
     let page = state.pages.find(it => it.id == pageId)
     if(page) {
       let index = page.sources.findIndex(it => it.id == sourceId)
-      if(index >= 0)
+      if(index >= 0) {
         page.sources.splice(index, 1)
+      }
     }
   },
   addWidget(state, {pageId, type}) {

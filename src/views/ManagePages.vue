@@ -1,6 +1,10 @@
 <template lang="pug">
 v-container
+  .d-flex.flex-column.mx-auto(v-if="pages.length==0")
+    .display-1.pt-4.text-center Create a page!
+    v-icon(large) mdi-arrow-down
   v-btn.mb-2(
+    v-else
     v-for="page in pages" :key="page.id"
     block
     @click="managePage(page.id)"
@@ -93,6 +97,7 @@ export default {
       this.selectedPageId = id
       this.editPageTitle = ''
       this.managePageDialog = true
+      this.confirmDeleteDialog = false
     },
     rename() {
       this.renamePage({id: this.selectedPageId, title: this.editPageTitle})
@@ -109,6 +114,7 @@ export default {
     actuallyDelete() {
       this.removePage(this.selectedPageId)
       this.managePageDialog = false
+      this.confirmDeleteDialog = false
     },
     create() {
       this.createPage(this.newPageTitle)

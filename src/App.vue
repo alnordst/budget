@@ -18,8 +18,25 @@ v-app
             v-list-item-title Manage Pages
           v-list-item(@click="$clipboard(pagesToJson)")
             v-list-item-title Backup to Clipboard
-          v-list-item(disabled)
-            v-list-item-title Restore from Clipboard
+          v-dialog(width="500px" v-model="dialog")
+            template(v-slot:activator="{ on, attrs }")
+              v-list-item(v-bind="attrs" v-on="on" @click="restoreJson=''")
+                v-list-item-title Restore from Clipboard
+            v-card
+              v-card-title Paste JSON here
+              v-card-text
+                v-textarea(outlined v-model="restoreJson" hide-details="auto")
+              v-card-actions.d-flex.flex-wrap
+                v-btn.ma-1.flex-grow-1(
+                  color="primary"
+                  dark
+                  @click="pagesFromJson({data: restoreJson, replace: true})"
+                ) Replace Current Pages
+                v-btn.ma-1.flex-grow-1(
+                  color="primary"
+                  dark
+                  @click="pagesFromJson({data: restoreJson, replace: false})"
+                ) Append to Current Pages
           v-list-item(disabled)
             v-list-item-title Backup to Dropbox
           v-list-item(disabled)
@@ -36,6 +53,10 @@ export default {
   components: {
     WidthSetter
   },
+  data: () => ({
+    dialog: false,
+    restoreJson: ''
+  }),
   name: 'App',
   computed: {
     ...mapState({

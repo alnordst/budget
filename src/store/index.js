@@ -9,7 +9,7 @@ Vue.use(Vuex)
 const vuexLocal = new VuexPersistence({
   key: '3and3budget',
   storage: window.LocalStorage,
-  modules: ['breadcrumbs']
+  modules: ['pages']
 })
 
 export default new Vuex.Store({
