@@ -146,7 +146,7 @@ export default {
     fixedInput() {
       return {
         name: this.input.name,
-        amount: Math.abs(this.input.amount) * (this.input.type ? -1 : 1),
+        amount: Math.abs(this.input.amount) * (this.input.type ? 1 : -1),
         regularity: this.input.regularity,
         date: this.input.date,
         active: this.input.active
@@ -178,6 +178,7 @@ export default {
     openEdit(id) {
       this.mode = 'edit'
       this.selectedSourceId = id
+      this.dialog = true
       this.input = {
         name: this.selectedSource.name,
         amount: Math.abs(this.selectedSource.amount),
@@ -186,10 +187,10 @@ export default {
         date: this.selectedSource.date,
         active: this.selectedSource.active
       }
-      this.dialog = true
     },
     openCreate() {
       this.mode = 'create'
+      this.dialog = true
       this.input = {
         name: undefined,
         amount: undefined,
@@ -198,7 +199,6 @@ export default {
         date: undefined,
         active: true
       }
-      this.dialog = true
     },
     edit() {
       this.editSource({
@@ -209,10 +209,11 @@ export default {
       this.dialog = false
     },
     del() {
-      this.deleteSource({
+      this.removeSource({
         pageId: this.page.id,
         sourceId: this.selectedSourceId
       })
+      this.dialog = false
     },
     create() {
       this.createSource({
