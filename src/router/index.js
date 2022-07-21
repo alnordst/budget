@@ -33,6 +33,10 @@ const routes = [
     path: '/page/:pageId/manage-widgets',
     name: 'manage-widgets',
     component: ManageWidgets
+  },
+  {
+    path: '/*',
+    redirect: { name: 'route-name' }
   }
 ]
 
