@@ -7,10 +7,11 @@ v-data-table(
   disable-sort
   hide-default-footer
   mobile-breakpoint="0"
+  order-by="date"
 )
   template(v-slot:item.amount="{ item }")
     span(:class="item.amount > 0 ? 'green--text text--darken-2' : ''")
-      span {{`${item.amount > 0 ? '+' : ''}`}}${{Math.abs(item.amount)}}
+      span {{`${item.amount > 0 ? '+' : ''}`}}${{Math.abs(item.amount).toFixed(2)}}
   template(v-slot:item.date="{ item }")
     span(:class="hasPassed(item.date) ? 'grey--text text--darken-1' : ''")
       span {{format(item.date)}}

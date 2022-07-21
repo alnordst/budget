@@ -1,5 +1,5 @@
 <template lang="pug">
-  span ${{result}}
+  span ${{result.toFixed(2)}}
 </template>
 
 <script>

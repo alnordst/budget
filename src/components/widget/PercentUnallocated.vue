@@ -1,5 +1,5 @@
 <template lang="pug">
-  span {{result * 100}}%
+  span {{(result * 100).toFixed()}}%
 </template>
 
 <script>

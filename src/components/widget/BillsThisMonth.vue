@@ -1,5 +1,5 @@
 <template lang="pug">
-  span ${{costThisMonth}}
+  span ${{costThisMonth.toFixed(2)}}
 </template>
 
 <script>
