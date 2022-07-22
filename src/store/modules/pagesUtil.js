@@ -6,7 +6,7 @@ const pullDate = (a, b) => {
 }
 
 const calcOccurrences = (regularity, then, now=dayjs()) => {
-  return calcOccurrencesFuncs[regularity](dayjs(date), dayjs(now))
+  return calcOccurrencesFuncs[regularity](dayjs(then), dayjs(now))
 }
 
 const calcMonthsToNext = (regularity, date) => {
@@ -69,9 +69,9 @@ const calcOccurrencesFuncs = {
 }
 
 const calcMonthsToNextFuncs = {
-  'annually': it => (12 + it.month() - now.month()) % 12,
-  'semi-annually': it => (12 + it.month() - now.month()) % 6,
-  'quarterly': it => (12 + it.month() - now.month()) % 3,
+  'annually': it => (12 + it.month() - dayjs().month()) % 12,
+  'semi-annually': it => (12 + it.month() - dayjs().month()) % 6,
+  'quarterly': it => (12 + it.month() - dayjs().month()) % 3,
   'monthly': () => 0,
   'semi-monthly': () => 0,
   'bi-weekly': () => 0,
