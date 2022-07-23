@@ -3,6 +3,7 @@ v-container
   .display-4.text-center(v-if="!page") 404
   div.d-flex.flex-column.mx-auto(v-else style="max-width:500px")
     v-data-iterator(
+      :style="iteratorStyle"
       :items="page.sources"
       sort-by="name"
     )
@@ -151,6 +152,9 @@ export default {
         date: this.input.date,
         active: this.input.active
       }
+    },
+    iteratorStyle() {
+      return `height:${this.$vuetify.breakpoint.height-56-36-16*2}px;`
     }
   },
   methods: {

@@ -1,6 +1,16 @@
 <template lang="pug">
 v-container
   .display-4.text-center(v-if="!page") 404
+  .d-flex.justify-end.w-100(v-else-if="page.sources.length == 0")
+    .display-1.pt-4.d-flex.flex-wrap.justify-center
+      span.mx-1 No sources yet,
+      span.mx-1 create one!
+    v-icon(large).ml-4.mr-7.mr-md-3 mdi-arrow-up-right
+  .d-flex.justify-end.w-100(v-else-if="page.widgets.length == 0")
+    .display-1.pt-4.d-flex.flex-wrap.justify-center
+      span.mx-1 No widgets yet,
+      span.mx-1 create one!
+    v-icon(large).ml-4.mr-7.mr-md-3 mdi-arrow-up-right
   div(v-else)
     v-row.pa-2
       widget(v-for="widget in page.widgets" :key="widget" :type="widget")
