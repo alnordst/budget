@@ -23,7 +23,7 @@ const getters = {
     let page = getters.page
     if(page)
       return page.sources.filter(it => it.active).map(source => {
-        let occurrences = util.calcOccurrences(source.regularity, source.date)
+        let occurrences = util.calcOccurrences(source.regularity, 0, source.date)
         return {
           ...source,
           occurrences,

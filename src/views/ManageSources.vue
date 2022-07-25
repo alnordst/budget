@@ -25,7 +25,7 @@ v-container
               v-col.pa-0(cols=6)
                 span {{item.regularity}}
               v-col.pa-0.text-right(cols=6)
-                span {{item.date}}
+                span {{format(item.date,item.regularity)}}
     .bottom-bar.pa-4.elevation-10
       width-setter
         v-btn(
@@ -109,6 +109,7 @@ v-container
 
 <script>
 import dayjs from 'dayjs'
+import ordinal from 'ordinal'
 import { mapGetters, mapMutations } from 'vuex'
 import WidthSetter from '../components/WidthSetter.vue'
 
@@ -225,6 +226,28 @@ export default {
         data: this.fixedInput
       })
       this.dialog = false
+    },
+    format(date, regularity) {
+      let n = dayjs()
+      let nm = n.month()
+      let d = dayjs(date)
+      let dm = d.month()
+      let funcs = {
+        'annually': () => d.format('M/DD'),
+        'semiannually': () => (dm % 6) + 6 * Math.floor(nm / 6),
+        'quarterly': () => (dm % 3) + 3 * Math.floor(nm / 3),
+        'monthly': () => `the ${ordinal(d.date())}`,
+        'semi-monthly': () => {
+          if(d.day() <= 14)
+            return `the ${ordinal(d.day())} and ${ordinal(d.day()+14)}`
+          else
+            return `the ${ordinal(d.day()-14)} and ${ordinal(d.day())}`
+        },
+        'bi-weekly': () => `${d.format('dddd')}s`,
+        'weekly': () => `${d.format('dddd')}s`,
+        'daily': () => 'n/a'
+      }
+      return funcs[regularity]()
     }
   },
   mounted() {

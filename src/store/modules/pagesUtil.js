@@ -5,8 +5,8 @@ const pullDate = (a, b) => {
   return a.date(date)
 }
 
-const calcOccurrences = (regularity, then, now=dayjs()) => {
-  return calcOccurrencesFuncs[regularity](dayjs(then), dayjs(now))
+const calcOccurrences = (regularity, monthOffset, then) => {
+  return calcOccurrencesFuncs[regularity](dayjs().add(monthOffset, 'months'), dayjs(then))
 }
 
 const calcMonthsToNext = (regularity, date) => {
@@ -14,28 +14,11 @@ const calcMonthsToNext = (regularity, date) => {
 }
 
 const calcOccurrencesFuncs = {
-  'annually': (then, now) => {
-    if(now.month() === then.month())
-      return [pullDate(now, then)]
-    else
-      return []
-  },
-  'semi-annually': (then, now) => {
-    if(now.month() % 6 === then.month() % 6)
-      return [pullDate(now, then)]
-    else
-      return []
-  },
-  'quarterly': (then, now) => {
-    if(now.month() % 3 === then.month() % 3)
-      return [pullDate(now, then)]
-    else
-      return []
-  },
-  'monthly': (then, now) => {
-    return [pullDate(now, then)]
-  },
-  'semi-monthly': (then, now) => {
+  'annually': (now, then) => months(12, now, then),
+  'semi-annually': (now, then) => months(6, now, then),
+  'quarterly': (now, then) => months(3, now, then),
+  'monthly': (now, then) => months(1, now, then),
+  'semi-monthly': (now, then) => {
     let dates = [pullDate(now, then)]
     if(then.date() <= 14)
       dates.push(pullDate(now, then.add(14, 'day')))
@@ -43,29 +26,31 @@ const calcOccurrencesFuncs = {
       dates.unshift(pullDate(now, then.subtract(14, 'day')))
     return dates
   },
-  'bi-weekly': (then, now) => {
-    let offset = now.startOf('month').diff(then, 'days') % 14
-    let dates = [now.date(offset + 1)]
-    while(dates[dates.length - 1].add(2, 'week').month() === now.month()) {
-      dates.push(dates[dates.length - 1].add(2, 'week'))
-    }
-    return dates
-  },
-  'weekly': (then, now) => {
-    let offset = now.startOf('month').diff(then, 'days') % 7
-    let dates = [now.date(offset + 1)]
-    while(dates[dates.length - 1].add(1, 'week').month() === now.month()) {
-      dates.push(dates[dates.length - 1].add(1, 'week'))
-    }
-    return dates
-  },
-  'daily': (now) => {
-    let dates = []
-    for(let i = 1; i <= now.endOf('month').date(); i++) {
-      dates.push(now.date(i))
-    }
-    return dates
+  'bi-weekly': (now, then) => days(14, now, then),
+  'weekly': (now, then) => days(7, now, then),
+  'daily': (now, then) => days(1, now, then)
+}
+
+const months = (n, now, then) => {
+  if(now.month() % n === then.month() % n)
+    return [pullDate(now, then)]
+  else
+    return []
+}
+
+const days = (n, now, then) => {
+  let diff = Math.abs(now.startOf('month').diff(then, 'days') % n)
+  console.log(diff)
+  let daysAfter
+  if(diff == 0 || now.startOf('month').isBefore(then))
+    daysAfter = diff
+  else
+    daysAfter = n - diff
+  let dates = [now.date(daysAfter + 1)]
+  while(dates[dates.length - 1].add(1, 'week').month() === now.month()) {
+    dates.push(dates[dates.length - 1].add(1, 'week'))
   }
+  return dates
 }
 
 const calcMonthsToNextFuncs = {

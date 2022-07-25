@@ -7,7 +7,6 @@ v-data-table(
   disable-sort
   hide-default-footer
   mobile-breakpoint="0"
-  order-by="date"
 )
   template(v-slot:item.amount="{ item }")
     span(:class="item.amount > 0 ? 'green--text text--darken-2' : ''")
@@ -45,10 +44,10 @@ export default {
           return acc
         }, [])
         .sort((a, b) => {
-          if(dayjs(a).isBefore(b, 'day'))
-            return 1
-          else if(dayjs(a).isAfter(b, 'day'))
+          if(dayjs(a.date).isBefore(b.date, 'day'))
             return -1
+          else if(dayjs(a.date).isAfter(b.date, 'day'))
+            return 1
           else
             return 0
         })
